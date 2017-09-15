@@ -55,24 +55,33 @@ public class Serverpc {
                 //para imprimir datos de salida                
                 PrintStream output = new PrintStream(clientSocket.getOutputStream());
                 //se lee peticion del cliente
-                for (int num = 1; num < 30; num++) {
-                    String request = input.readLine();
+                int contador = 0;
+                
+                String request = "incio";
+                String strOutput = "";
+                
+                while (!request.equals("")) {
+                    request = input.readLine();
+                    if (((String)request.substring(0, 2)).equals("GET")){
+                        strOutput = process(request);
+                    }
+                            
                     System.out.println("" + request + "");
                 }
                 //se procesa la peticion y se espera resultado
-                // String strOutput = process(request);  
-                //String strOutput = "HTTP/1.1 200 OK\n"
-                //System.out.println("Servidor> Resultado de petición");
-                //System.out.println("Servidor> \"" + strOutput + "\"");
-                //se imprime en cliente
-                output.flush();//vacia contenido
-                output.println("HTTP/1.1 200 OK\n");
-                output.println("");
-                output.println("<html>\n"
-                        + "<body>\n"
-                        + "<h1>Hello, World!</h1>\n"
-                        + "</body>\n"
-                        + "</html>");
+//                String strOutput = process(request);  
+//                //String strOutput = "HTTP/1.1 200 OK\n"
+//                //System.out.println("Servidor> Resultado de petición");
+//                //System.out.println("Servidor> \"" + strOutput + "\"");
+//                //se imprime en cliente
+//                output.flush();//vacia contenido
+//                output.println("HTTP/1.1 200 OK\n");
+//                output.println("");
+//                output.println("<html>\n"
+//                        + "<body>\n"
+//                        + "<h1>Hello, World!</h1>\n"
+//                        + "</body>\n"
+//                        + "</html>");
 
                 //cierra conexion
                 clientSocket.close();
@@ -90,31 +99,7 @@ public class Serverpc {
      */
     public static String process(String request) {
         String result = "";
-        //frases
-        String[] phrases = {
-            "La tecnología se alimenta a si misma. La tecnología hace posible más tecnología.-Alvin Toffler.",
-            "La tecnología es sólo una herramienta. En términos de llevar a los niños a trabajar juntos y motivarlos, el profesor es el más importante.-Bill Gates.",
-            "La máquina tecnológicamente más eficiente que el hombre ha inventado es el libro.-Northrop Frye.",
-            "Ya no hacen más los bugs como bunny - Olav Mjelde",
-            "Un lenguaje de programación es de bajo nivel cuando requiere que prestes atencion a lo irrelevante.-Alan J. Perlis.",
-            "Hablar es barato. Enséñame el código.-Linus Torvalds ",
-            "No me importa si funciona en su máquina! No me envían su máquina!.-Vidiu Platon",
-            "Siempre codifica como si la persona que finalmente mantendrá tu código fuera un psicópata violento que sabe dónde vives.-Martin Golding"};
-        ArrayList<String> phrasesList = new ArrayList<>();
-        Collections.addAll(phrasesList, phrases);
-        //libros
-        String[] books = {
-            "Divina Comedia - Dante Alighieri",
-            "Don Quijote de la Mancha - Miguel de Cervantes",
-            "Cien años de soledad - Gabriel García Márquez",
-            "Moby Dick - Herman Melville",
-            "Ana Karenina - Lev Tolstói",
-            "Eneida - Virgilio",
-            "Otelo - William Shakespeare",
-            "El viejo y el mar - Ernest Hemingway",
-            "Orgullo y prejuicio - Jane Austen"};
-        ArrayList<String> booksList = new ArrayList<>();
-        Collections.addAll(booksList, books);
+        String[] palabrasClave = request.split("%20");
 
         if (request != null) {
             switch (request) {
