@@ -20,14 +20,9 @@ import java.util.logging.Logger;
 
 public class Serverpc {
 
-    /**
-     * Puerto
-     */
     private final static int PORT = 5000;
+    private final static String path = "C:\\Users\\user\\Documents\\NetBeansProjects\\ProyectoRedes\\";
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
 
         /*
@@ -140,7 +135,7 @@ public class Serverpc {
 
     public static String displayWebsite(String address) {
         try {
-            File file = new File("C:\\Users\\LabingXEON\\Documents\\NetBeansProjects\\RedesProyecto\\src\\directorioConPaginasWeb\\" + address + ".html");
+            File file = new File(path+"src\\directorioConPaginasWeb\\" + address + ".html");
             Scanner sc = new Scanner(file);
             ArrayList<String> palabras = new ArrayList<String>();
             StringBuffer page = new StringBuffer("");
@@ -164,7 +159,7 @@ public class Serverpc {
 
     public static ArrayList<String> readFile(String fileName) {
         try {
-            File file = new File("C:\\Users\\LabingXEON\\Documents\\NetBeansProjects\\RedesProyecto\\src\\archivoDePalabras.txt");
+            File file = new File(path+"\\src\\archivoDePalabras.txt");
             Scanner sc = new Scanner(file);
             ArrayList<String> palabras = new ArrayList<String>();
             while (sc.hasNextLine()) {
