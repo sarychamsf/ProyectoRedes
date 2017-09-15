@@ -100,7 +100,16 @@ public class Serverpc {
     public static String process(String request) {
         String result = "";
         String[] palabrasClave = request.split("%20");
-
+        
+        ArrayList<String> palabrasProhibidas = new ArrayList<String>();
+        palabrasProhibidas.add("tonto");
+        palabrasProhibidas.add("feo");
+        palabrasProhibidas.add("malo");
+        
+        for (String palabrasProhibida : palabrasProhibidas) {
+            
+        }
+        if (request)
         if (request != null) {
             switch (request) {
                 case "frase":
