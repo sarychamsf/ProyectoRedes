@@ -68,9 +68,14 @@ public class Serverpc {
 
                 while (!request.equals("")) {
                     request = input.readLine();
-                    String test = request.substring(0, 3);
-                    if (test.equals("GET")) {
-                        strOutput = process(request, "archivoDePalabras.txt");
+                    try {
+                        String test = request.substring(0, 3);
+                        if (test.equals("GET")) {
+                            strOutput = process(request, "archivoDePalabras.txt");
+                            break;
+                        }
+                    } catch (Exception e) {
+
                     }
 
                     System.out.println("" + request + "");
@@ -81,14 +86,10 @@ public class Serverpc {
 //                //System.out.println("Servidor> Resultado de petición");
 //                //System.out.println("Servidor> \"" + strOutput + "\"");
 //                //se imprime en cliente
-//                output.flush();//vacia contenido
+                output.flush();//vacia contenido
 //                output.println("HTTP/1.1 200 OK\n");
 //                output.println("");
-//                output.println("<html>\n"
-//                        + "<body>\n"
-//                        + "<h1>Hello, World!</h1>\n"
-//                        + "</body>\n"
-//                        + "</html>");
+                output.println(strOutput);
 
                 //cierra conexion
                 clientSocket.close();
@@ -105,37 +106,65 @@ public class Serverpc {
      * @return String
      */
     public static String process(String request, String fileName) {
-        
+
         StringBuffer result = new StringBuffer("");
 
         //String[] palabrasClave = ((request.split(" "))[1]).substring(1).split("%20");
-        
         // Añadir primera linea
         request = ((request.split(" "))[1]).substring(1);
-        
+
         result.append("HTTP/1.1 200 OK\n\n");
 
         ArrayList<String> palabrasProhibidas = readFile(fileName);
 
         for (String palabraProhibida : palabrasProhibidas) {
             if (request.contains(palabraProhibida)) {
-                return displayError(palabraProhibida);
+                return result.append(displayError(palabraProhibida)).toString();
             }
         }
-        return displayWebsite(request);
+        return result.append(displayWebsite(request)).toString();
     }
 
     public static String displayError(String palabraProhibida) {
-        return "error";
+        return "<!DOCTYPE html>\n"
+                + "<html>\n"
+                + "    <body>\n"
+                + "    <header><h1>La pagina solicitada es prohibida por contener la palabra: " + palabraProhibida + "</h1></header>\n"
+                + "    \n"
+                + "        Por:\n"
+                + "        Sara Chamsedinne\n"
+                + "        Juan Palomino\n"
+                + "    </body>\n"
+                + "</html>";
     }
 
-    public static String displayWebsite(String palabraProhibida) {
-        return "";
+    public static String displayWebsite(String address) {
+        try {
+            File file = new File("C:\\Users\\LabingXEON\\Documents\\NetBeansProjects\\RedesProyecto\\src\\directorioConPaginasWeb\\" + address + ".html");
+            Scanner sc = new Scanner(file);
+            ArrayList<String> palabras = new ArrayList<String>();
+            StringBuffer page = new StringBuffer("");
+            while (sc.hasNextLine()) {
+                page.append(sc.nextLine() + "\n");
+            }
+            return page.toString();
+        } catch (FileNotFoundException ex) {
+            return ("<!DOCTYPE html>\n"
+                    + "<html>\n"
+                    + "    <body>\n"
+                    + "    <header><h1>404. La página no se encontró.</h1></header>\n"
+                    + "    \n"
+                    + "        Por:\n"
+                    + "        Sara Chamsedinne\n"
+                    + "        Juan Palomino\n"
+                    + "    </body>\n"
+                    + "</html>");
+        }
     }
 
     public static ArrayList<String> readFile(String fileName) {
         try {
-            File file = new File("\\src\\archivoDePalabras.txt");
+            File file = new File("C:\\Users\\LabingXEON\\Documents\\NetBeansProjects\\RedesProyecto\\src\\archivoDePalabras.txt");
             Scanner sc = new Scanner(file);
             ArrayList<String> palabras = new ArrayList<String>();
             while (sc.hasNextLine()) {
@@ -143,7 +172,7 @@ public class Serverpc {
             }
             return palabras;
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Serverpc.class.getName()).log(Level.SEVERE, null, ex);
+
         }
         return null;
     }
