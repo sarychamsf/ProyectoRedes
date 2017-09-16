@@ -125,7 +125,6 @@ public class Serverpc {
         try {
             File file = new File(PATH + "src\\directorioConPaginasWeb\\" + address + ".html");
             Scanner sc = new Scanner(file);
-            ArrayList<String> palabras = new ArrayList<>();
             StringBuffer page = new StringBuffer("");
             while (sc.hasNextLine()) {
                 page.append(sc.nextLine()).append("\n");
