@@ -32,8 +32,9 @@ public class Serverpc {
                 }
             }
         }
-        
+
         try {
+
             //Socket de servidor para esperar peticiones de la red
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Servidor> Servidor iniciado");
@@ -58,7 +59,7 @@ public class Serverpc {
                     try {
                         String test = request.substring(0, 3);
                         if (test.equals("GET")) {
-                            strOutput = process(request, archivo);
+                            strOutput = process(request);
                             break;
                         }
                     } catch (Exception e) {
@@ -81,20 +82,17 @@ public class Serverpc {
     /**
      * Procesa petición del cliente y retorna un resultado.
      *
-     * @param request peticion del cliente.
-     * @param fileName nombre del archivo.
+     * @param request petición del cliente.
      * @return String
      */
-    public static String process(String request, String fileName) {
+    public static String process(String request) {
 
         StringBuffer result = new StringBuffer("");
 
-        // Añadir primera linea
         request = ((request.split(" "))[1]).substring(1);
-
         result.append("HTTP/1.1 200 OK\n\n");
 
-        ArrayList<String> palabrasProhibidas = readFile(fileName);
+        ArrayList<String> palabrasProhibidas = readFile();
 
         for (String palabraProhibida : palabrasProhibidas) {
             if (request.contains(palabraProhibida)) {
@@ -104,6 +102,14 @@ public class Serverpc {
         return result.append(displayWebsite(request)).toString();
     }
 
+    /**
+     * Este método muestra un mensaje diciendo que la página está prohibida si
+     * el request contiene alguna palabra escrita en el documento .txt
+     *
+     * @param palabraProhibida
+     * @return página HTML que muestra un mensaje especificando que la página
+     * está prohibida por contener la palabra.
+     */
     public static String displayError(String palabraProhibida) {
         return ("<!DOCTYPE html>\n"
                 + "<html lang=\"es\" dir=\"ltr\">\n"
@@ -117,6 +123,12 @@ public class Serverpc {
                 + "</html>");
     }
 
+    /**
+     * Muestra la página web solicitada por el cliente (Google Chrome).
+     *
+     * @param address dirección que se escribe en la URL (request)
+     * @return
+     */
     public static String displayWebsite(String address) {
         try {
             File file = new File(directorio + "/" + address + ".html");
@@ -140,7 +152,12 @@ public class Serverpc {
         }
     }
 
-    public static ArrayList<String> readFile(String fileName) {
+    /**
+     * Lee el archivo de texto que contiene las palabras prohibidas.
+     *
+     * @return arreglo que contiene las palabras prohibidas.
+     */
+    public static ArrayList<String> readFile() {
         ArrayList<String> palabras = new ArrayList<>();
         try {
             File file = new File(archivo);
