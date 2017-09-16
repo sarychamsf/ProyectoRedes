@@ -13,21 +13,17 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Serverpc {
 
     private final static int PORT = 5000;
-    private final static String path = "C:\\Users\\user\\Documents\\NetBeansProjects\\ProyectoRedes\\";
+    private final static String PATH = "C:\\Users\\user\\Documents\\NetBeansProjects\\ProyectoRedes\\";
+    private static String archivo = "";
+    private static String directorio = "";
 
     public static void main(String[] args) {
 
-        /*
-        String archivo = "";
-        String directorio = "";
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-a")) {
                 archivo = args[i + 1];
@@ -38,9 +34,9 @@ public class Serverpc {
             }
         }
         
-         System.out.println("Archivo: " + archivo);
-        System.out.println("Directorio: " + directorio);
-         */
+        System.out.println("ARCHIVO: "+archivo);
+        System.out.println("DIRECTORIO: "+directorio);
+
         try {
             //Socket de servidor para esperar peticiones de la red
             ServerSocket serverSocket = new ServerSocket(PORT);
@@ -49,15 +45,15 @@ public class Serverpc {
             //Socket de cliente
             Socket clientSocket;
             while (true) {
+                
                 //en espera de conexion, si existe la acepta
                 clientSocket = serverSocket.accept();
                 //Para leer lo que envie el cliente
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 //para imprimir datos de salida                
                 PrintStream output = new PrintStream(clientSocket.getOutputStream());
+                
                 //se lee peticion del cliente
-                int contador = 0;
-
                 String request = "incio";
                 String strOutput = "";
 
@@ -66,27 +62,19 @@ public class Serverpc {
                     try {
                         String test = request.substring(0, 3);
                         if (test.equals("GET")) {
-                            strOutput = process(request, "archivoDePalabras.txt");
+                            strOutput = process(request, archivo);
                             break;
                         }
                     } catch (Exception e) {
-
+                        System.out.println("Error.");
                     }
 
                     System.out.println("" + request + "");
                 }
-                //se procesa la peticion y se espera resultado
-//                String strOutput = process(request);  
-//                //String strOutput = "HTTP/1.1 200 OK\n"
-//                //System.out.println("Servidor> Resultado de petición");
-//                //System.out.println("Servidor> \"" + strOutput + "\"");
-//                //se imprime en cliente
-                output.flush();//vacia contenido
-//                output.println("HTTP/1.1 200 OK\n");
-//                output.println("");
+
+                output.flush();
                 output.println(strOutput);
 
-                //cierra conexion
                 clientSocket.close();
             }
         } catch (IOException ex) {
@@ -95,16 +83,16 @@ public class Serverpc {
     }
 
     /**
-     * procesa peticion del cliente y retorna resultado
+     * Procesa petición del cliente y retorna un resultado.
      *
-     * @param request peticion del cliente
+     * @param request peticion del cliente.
+     * @param fileName nombre del archivo.
      * @return String
      */
     public static String process(String request, String fileName) {
 
         StringBuffer result = new StringBuffer("");
 
-        //String[] palabrasClave = ((request.split(" "))[1]).substring(1).split("%20");
         // Añadir primera linea
         request = ((request.split(" "))[1]).substring(1);
 
@@ -121,55 +109,57 @@ public class Serverpc {
     }
 
     public static String displayError(String palabraProhibida) {
-        return "<!DOCTYPE html>\n"
-                + "<html>\n"
-                + "    <body>\n"
-                + "    <header><h1>La pagina solicitada es prohibida por contener la palabra: " + palabraProhibida + "</h1></header>\n"
-                + "    \n"
-                + "        Por:\n"
-                + "        Sara Chamsedinne\n"
-                + "        Juan Palomino\n"
-                + "    </body>\n"
-                + "</html>";
+        return ("<!DOCTYPE html>\n"
+                + "<html lang=\"es\" dir=\"ltr\">\n"
+                + "<head>\n"
+                + "<meta charset=\"UTF-8\">\n"
+                + "</head>\n"
+                + "<body>\n"
+                + "<header> <h1>La página solicitada está prohibida por contener la palabra: " + palabraProhibida + ".</h1> </header>\n"
+                + "Por: Sara Chamseddine y Juan Palomino."
+                + "</body>\n"
+                + "</html>");
     }
 
     public static String displayWebsite(String address) {
         try {
-            File file = new File(path+"src\\directorioConPaginasWeb\\" + address + ".html");
+            File file = new File(PATH + "src\\directorioConPaginasWeb\\" + address + ".html");
             Scanner sc = new Scanner(file);
-            ArrayList<String> palabras = new ArrayList<String>();
+            ArrayList<String> palabras = new ArrayList<>();
             StringBuffer page = new StringBuffer("");
             while (sc.hasNextLine()) {
-                page.append(sc.nextLine() + "\n");
+                page.append(sc.nextLine()).append("\n");
             }
             return page.toString();
         } catch (FileNotFoundException ex) {
             return ("<!DOCTYPE html>\n"
-                    + "<html>\n"
-                    + "    <body>\n"
-                    + "    <header><h1>404. La página no se encontró.</h1></header>\n"
-                    + "    \n"
-                    + "        Por:\n"
-                    + "        Sara Chamsedinne\n"
-                    + "        Juan Palomino\n"
-                    + "    </body>\n"
+                    + "<html lang=\"es\" dir=\"ltr\">\n"
+                    + "<head>\n"
+                    + "<meta charset=\"UTF-8\">\n"
+                    + "</head>\n"
+                    + "<body>\n"
+                    + "<header> <h1>404. Página no encontrada.</h1> </header>\n"
+                    + "Por: Sara Chamseddine y Juan Palomino."
+                    + "</body>\n"
                     + "</html>");
         }
     }
 
     public static ArrayList<String> readFile(String fileName) {
+        ArrayList<String> palabras = new ArrayList<>();
         try {
-            File file = new File(path+"\\src\\archivoDePalabras.txt");
+            File file = new File(PATH + "\\src\\" + archivo);
             Scanner sc = new Scanner(file);
-            ArrayList<String> palabras = new ArrayList<String>();
             while (sc.hasNextLine()) {
-                palabras.add(sc.nextLine());
+                String linea = sc.nextLine();
+                if (!linea.equals("fin")) {
+                    palabras.add(linea);
+                }
             }
-            return palabras;
         } catch (FileNotFoundException ex) {
-
+            System.out.println("El archivo no ha sido encontrado.");
         }
-        return null;
+        return palabras;
     }
 
 }
