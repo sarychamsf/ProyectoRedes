@@ -1,7 +1,7 @@
 
 /** Esta es la clase servidor.
  *
- * @author Sara Chamseddine, Juan Palomino
+ * @author Sara Chamseddine, Juan Palomino.
  * @since 20/09/2017
  */
 import java.io.BufferedReader;
@@ -18,7 +18,6 @@ import java.util.Scanner;
 public class Serverpc {
 
     private final static int PORT = 5000;
-    private final static String PATH = "C:\\Users\\user\\Documents\\NetBeansProjects\\ProyectoRedes\\";
     private static String archivo = "";
     private static String directorio = "";
 
@@ -34,9 +33,6 @@ public class Serverpc {
             }
         }
         
-        System.out.println("ARCHIVO: "+archivo);
-        System.out.println("DIRECTORIO: "+directorio);
-
         try {
             //Socket de servidor para esperar peticiones de la red
             ServerSocket serverSocket = new ServerSocket(PORT);
@@ -45,14 +41,14 @@ public class Serverpc {
             //Socket de cliente
             Socket clientSocket;
             while (true) {
-                
+
                 //en espera de conexion, si existe la acepta
                 clientSocket = serverSocket.accept();
                 //Para leer lo que envie el cliente
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 //para imprimir datos de salida                
                 PrintStream output = new PrintStream(clientSocket.getOutputStream());
-                
+
                 //se lee peticion del cliente
                 String request = "incio";
                 String strOutput = "";
@@ -123,7 +119,7 @@ public class Serverpc {
 
     public static String displayWebsite(String address) {
         try {
-            File file = new File(PATH + "src\\directorioConPaginasWeb\\" + address + ".html");
+            File file = new File(directorio + "/" + address + ".html");
             Scanner sc = new Scanner(file);
             StringBuffer page = new StringBuffer("");
             while (sc.hasNextLine()) {
@@ -147,7 +143,7 @@ public class Serverpc {
     public static ArrayList<String> readFile(String fileName) {
         ArrayList<String> palabras = new ArrayList<>();
         try {
-            File file = new File(PATH + "\\src\\" + archivo);
+            File file = new File(archivo);
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
                 String linea = sc.nextLine();
